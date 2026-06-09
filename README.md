@@ -4,8 +4,6 @@
 > Steel grays, muted teals, dusty purples, and slate blues.
 > One plugin. Two variants.
 
----
-
 <!--
   SCREENSHOTS
   Replace with actual images once you have them.
@@ -19,16 +17,12 @@
   dark · steel gray · cool desaturated       light · pale fog · dark slate ink
 ```
 
----
-
 ## Variants
 
 | Name | Background | Feel |
 |---|---|---|
 | `overcast` | dark | Cool gray-green, steel blues, dusty purples |
 | `overcast-dawn` | light | Morning fog, pale gray-blue, dark slate ink |
-
----
 
 ## Palette
 
@@ -40,8 +34,6 @@
                                           purple   #9c7aaa
                                           cyan     #4d9a94
 ```
-
----
 
 ## Installation
 
@@ -70,16 +62,12 @@ use {
 }
 ```
 
----
-
 ## Switching Variants
 
 ```lua
 vim.cmd("colorscheme overcast")       -- dark
 vim.cmd("colorscheme overcast-dawn")  -- light
 ```
-
----
 
 ## Configuration
 
@@ -108,8 +96,6 @@ require("overcast").setup({
 })
 ```
 
----
-
 ## Lualine
 
 ```lua
@@ -128,8 +114,6 @@ require("lualine").setup({
 })
 ```
 
----
-
 ## Using the Palette
 
 ```lua
@@ -144,8 +128,6 @@ require("bufferline").setup({
   },
 })
 ```
-
----
 
 ## Plugin Support
 
@@ -164,8 +146,6 @@ Terminal colors   nvim-notify
                   render-markdown
 ```
 
----
-
 ## Structure
 
 ```
@@ -180,8 +160,6 @@ overcast.nvim/
     ├── terminal.lua      terminal color mappings
     └── lualine.lua       lualine theme (both variants)
 ```
-
----
 
 ## License
 
