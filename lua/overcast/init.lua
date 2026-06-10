@@ -1,24 +1,24 @@
 --[[
-  overcast.nvim
-  A cool, desaturated Neovim colorscheme family.
-  Built on steel grays, muted teals, dusty purples, and slate blues.
+  overcast.nvim — cool, desaturated Neovim colorscheme family.
 
   Variants:
-    overcast       — dark, cool gray-green backgrounds
-    overcast-dawn  — light, pale morning fog with dark slate ink
+    overcast       — dark, steel gray-green
+    overcast-dawn  — light, pale morning fog, dark slate ink
 
-  Usage:
+  Quick start:
+    require("overcast").setup({})
     vim.cmd("colorscheme overcast")
-    vim.cmd("colorscheme overcast-dawn")
 
-  Config:
+  All options:
     require("overcast").setup({
       terminal_colors = true,
       italic_comments = true,
       italic_strings  = false,
       bold_functions  = false,
       transparent_bg  = false,
+      on_highlights   = nil,  -- function(hl, c) hl.Normal = { fg = c.fg0 } end
       styles          = {},
+      load            = nil,  -- "overcast-dawn" to load immediately
     })
 --]]
 
@@ -30,12 +30,17 @@ M.config = {
   italic_strings  = false,
   bold_functions  = false,
   transparent_bg  = false,
+  on_highlights   = nil,
   styles          = {},
+  load            = nil,
 }
 
 function M.setup(opts)
   M.config = vim.tbl_deep_extend("force", M.config, opts or {})
+  if M.config.load then M._load(M.config.load) end
 end
+
+function M.load(variant) M._load(variant) end
 
 function M._load(variant)
   local palettes   = require("overcast.palettes")
@@ -45,7 +50,7 @@ function M._load(variant)
   local c = palettes[variant]
   if not c then
     vim.notify(
-      string.format("[overcast.nvim] Unknown variant '%s'", variant),
+      ("[overcast.nvim] Unknown variant %q. Valid: overcast, overcast-dawn"):format(variant),
       vim.log.levels.ERROR
     )
     return
@@ -53,45 +58,30 @@ function M._load(variant)
 
   c = vim.deepcopy(c)
 
-  if vim.fn.has("termguicolors") == 1 then
-    vim.opt.termguicolors = true
-  end
+  if vim.fn.has("termguicolors") == 1 then vim.opt.termguicolors = true end
 
   vim.opt.background = (variant == "overcast-dawn") and "light" or "dark"
   vim.g.colors_name  = variant
 
   vim.cmd("highlight clear")
-  if vim.fn.exists("syntax_on") == 1 then
-    vim.cmd("syntax reset")
-  end
+  if vim.fn.exists("syntax_on") == 1 then vim.cmd("syntax reset") end
 
-  if M.config.transparent_bg then
-    c.bg1 = "NONE"
-  end
+  if M.config.transparent_bg then c.bg1 = "NONE" end
 
-  highlights.apply(c)
+  highlights.apply(c, M.config)
 
-  if M.config.terminal_colors then
-    terminal.apply(c)
+  if M.config.terminal_colors then terminal.apply(c) end
+
+  if type(M.config.on_highlights) == "function" then
+    local overrides = {}
+    M.config.on_highlights(overrides, c)
+    for group, style in pairs(overrides) do
+      vim.api.nvim_set_hl(0, group, style)
+    end
   end
 
   for group, style in pairs(M.config.styles) do
     vim.api.nvim_set_hl(0, group, style)
-  end
-
-  if not M.config.italic_comments then
-    vim.api.nvim_set_hl(0, "Comment",  { fg = c.fg2 })
-    vim.api.nvim_set_hl(0, "@comment", { fg = c.fg2 })
-  end
-
-  if M.config.italic_strings then
-    vim.api.nvim_set_hl(0, "String",  { fg = c.green, italic = true })
-    vim.api.nvim_set_hl(0, "@string", { fg = c.green, italic = true })
-  end
-
-  if M.config.bold_functions then
-    vim.api.nvim_set_hl(0, "Function",  { fg = c.blue, bold = true })
-    vim.api.nvim_set_hl(0, "@function", { fg = c.blue, bold = true })
   end
 end
 

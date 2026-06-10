@@ -1,0 +1,32 @@
+# overcast — alacritty color theme
+[colors.primary]
+background = "#222424"
+foreground = "#eeeeee"
+
+[colors.cursor]
+text   = "#222424"
+cursor = "#bbbbbb"
+
+[colors.selection]
+text       = "CellForeground"
+background = "#3f4444"
+
+[colors.normal]
+black   = "#222424"
+red     = "#cc5555"
+green   = "#5a9e6f"
+yellow  = "#a89a6a"
+blue    = "#5b8aad"
+magenta = "#9c7aaa"
+cyan    = "#4d9a94"
+white   = "#bbbbbb"
+
+[colors.bright]
+black   = "#3a3d3d"
+red     = "#dd6e6e"
+green   = "#72b585"
+yellow  = "#c4b47e"
+blue    = "#72a0c1"
+magenta = "#b38fc0"
+cyan    = "#62b2ab"
+white   = "#eeeeee"
