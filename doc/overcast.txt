@@ -1,0 +1,160 @@
+*overcast.nvim*  Cool, desaturated Neovim colorscheme family.
+
+Author:   saeeedhany <https://github.com/saeeedhany>
+Homepage: https://github.com/saeeedhany/overcast.nvim
+License:  MIT
+
+==============================================================================
+CONTENTS                                                    *overcast-contents*
+
+  1. Introduction ................................. |overcast-introduction|
+  2. Variants ..................................... |overcast-variants|
+  3. Installation ................................. |overcast-installation|
+  4. Configuration ................................ |overcast-configuration|
+  5. API .......................................... |overcast-api|
+  6. Extras ....................................... |overcast-extras|
+  7. Health check ................................. |overcast-health|
+
+==============================================================================
+1. INTRODUCTION                                         *overcast-introduction*
+
+overcast.nvim is a cool, desaturated Neovim colorscheme family. Steel grays,
+muted teals, dusty purples, and slate blues. Built from the dwm terminal
+palette — the background is the exact same color as the dwm status bar.
+
+==============================================================================
+2. VARIANTS                                                 *overcast-variants*
+
+*overcast*
+  Dark variant. Cool gray-green backgrounds (#222424), steel blue accents,
+  dusty purple keywords.
+
+*overcast-dawn*
+  Light variant. Pale morning fog backgrounds (#e2e5e5), dark cool slate ink,
+  same hue family as the dark variant but inverted.
+
+Switch at any time: >
+  :colorscheme overcast
+  :colorscheme overcast-dawn
+<
+
+==============================================================================
+3. INSTALLATION                                         *overcast-installation*
+
+lazy.nvim: >
+  {
+    "saeeedhany/overcast.nvim",
+    priority = 1000,
+    config = function()
+      require("overcast").setup({})
+      vim.cmd("colorscheme overcast")
+    end,
+  }
+<
+
+==============================================================================
+4. CONFIGURATION                                       *overcast-configuration*
+
+Call `setup()` before loading the colorscheme. All options are optional.
+
+>
+  require("overcast").setup({
+    terminal_colors = true,   -- set vim.g.terminal_color_*
+    italic_comments = true,   -- italic on all @comment.* groups
+    italic_strings  = false,  -- italic on all @string.* groups
+    bold_functions  = false,  -- bold on all @function.* groups
+    transparent_bg  = false,  -- clear Normal background
+    on_highlights   = nil,    -- callback for fine-grained overrides
+    styles          = {},     -- table of { GroupName = { ... } }
+    load            = nil,    -- load variant immediately on setup()
+  })
+<
+
+                                                    *overcast-on_highlights*
+`on_highlights` receives a highlights table and the active palette: >
+
+  require("overcast").setup({
+    on_highlights = function(hl, c)
+      hl.Normal      = { fg = c.fg0, bg = c.bg1 }
+      hl["@keyword"] = { fg = c.purple, bold = true }
+    end,
+  })
+<
+
+                                                           *overcast-styles*
+`styles` is a simpler override table applied after all highlights: >
+
+  require("overcast").setup({
+    styles = {
+      ["@keyword"] = { fg = "#9c7aaa", bold = true },
+      Comment      = { italic = false },
+    },
+  })
+<
+
+==============================================================================
+5. API                                                           *overcast-api*
+
+                                                          *overcast.setup()*
+`require("overcast").setup({opts})`
+  Configure the theme. See |overcast-configuration|.
+
+                                                           *overcast.load()*
+`require("overcast").load({variant})`
+  Load a variant programmatically. Same as `:colorscheme {variant}` but
+  callable from Lua. >
+    require("overcast").load("overcast-dawn")
+<
+
+                                                        *overcast.palette()*
+`require("overcast").palette([variant])`
+  Returns the color table for the given variant (or the active one). Useful
+  for configuring other plugins: >
+    local c = require("overcast").palette()
+    require("lualine").setup({
+      options = { theme = require("overcast.lualine") }
+    })
+    require("bufferline").setup({
+      highlights = {
+        indicator_selected = { fg = c.blue },
+      }
+    })
+<
+
+==============================================================================
+6. EXTRAS                                                     *overcast-extras*
+
+Terminal emulator themes generated from the same palette are in `extras/`:
+
+  extras/overcast-kitty.conf          kitty (dark)
+  extras/overcast-dawn-kitty.conf     kitty (light)
+  extras/overcast-alacritty.toml      alacritty (dark)
+  extras/overcast-dawn-alacritty.toml alacritty (light)
+  extras/overcast-tmux.conf           tmux (dark)
+  extras/overcast-dawn-tmux.conf      tmux (light)
+  extras/overcast-wezterm.lua         wezterm (both variants)
+
+For st (suckless terminal), copy the color values from the kitty config into
+your `config.h` colorname[] array. The 16-color order matches exactly.
+
+                                                    *overcast-tmux-256color*
+Note for st + tmux users: add the following to your tmux config to ensure
+true color passthrough works correctly: >
+
+  set -g default-terminal "tmux-256color"
+  set -ag terminal-overrides ",*256col*:Tc"
+  set -ag terminal-overrides ",xterm-256color:Tc"
+<
+Without this, tmux may strip 24-bit colors and overcast will look flat.
+
+==============================================================================
+7. HEALTH CHECK                                             *overcast-health*
+
+Run `:checkhealth overcast` to verify:
+  - Neovim version >= 0.9
+  - `termguicolors` is enabled
+  - An overcast variant is active
+  - nvim-treesitter is available
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:
