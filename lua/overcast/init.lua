@@ -42,6 +42,32 @@ end
 
 function M.load(variant) M._load(variant) end
 
+-- ─── diagnostic signs ────────────────────────────────────────────────────────
+function M._define_signs()
+  if vim.fn.has("nvim-0.10") == 1 then
+    vim.diagnostic.config({
+      signs = {
+        text = {
+          [vim.diagnostic.severity.ERROR] = "E",
+          [vim.diagnostic.severity.WARN]  = "W",
+          [vim.diagnostic.severity.INFO]  = "I",
+          [vim.diagnostic.severity.HINT]  = "H",
+        },
+      },
+    })
+  else
+    local signs = {
+      { name = "DiagnosticSignError", text = "E" },
+      { name = "DiagnosticSignWarn",  text = "W" },
+      { name = "DiagnosticSignInfo",  text = "I" },
+      { name = "DiagnosticSignHint",  text = "H" },
+    }
+    for _, s in ipairs(signs) do
+      vim.fn.sign_define(s.name, { text = s.text, texthl = s.name, numhl = "" })
+    end
+  end
+end
+
 function M._load(variant)
   local palettes   = require("overcast.palettes")
   local highlights = require("overcast.highlights")
@@ -92,32 +118,3 @@ function M.palette(variant)
 end
 
 return M
-
--- ─── diagnostic signs ────────────────────────────────────────────────────────
--- Called from _load() after highlights are applied.
--- Defines consistent gutter symbols that match the theme's aesthetic.
-function M._define_signs()
-  local signs = {
-    { name = "DiagnosticSignError", text = "E" },
-    { name = "DiagnosticSignWarn",  text = "W" },
-    { name = "DiagnosticSignInfo",  text = "I" },
-    { name = "DiagnosticSignHint",  text = "H" },
-  }
-  -- Neovim >= 0.10 uses vim.diagnostic.config signs table
-  if vim.fn.has("nvim-0.10") == 1 then
-    vim.diagnostic.config({
-      signs = {
-        text = {
-          [vim.diagnostic.severity.ERROR] = "E",
-          [vim.diagnostic.severity.WARN]  = "W",
-          [vim.diagnostic.severity.INFO]  = "I",
-          [vim.diagnostic.severity.HINT]  = "H",
-        },
-      },
-    })
-  else
-    for _, s in ipairs(signs) do
-      vim.fn.sign_define(s.name, { text = s.text, texthl = s.name, numhl = "" })
-    end
-  end
-end
